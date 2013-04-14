@@ -1,0 +1,24 @@
+#!/bin/sh
+
+FREQ=$(zenity --list --title 'Select maximum CPU frequency' \
+--text 'Both CPUs set equally. Units are KHz!' --column 'Frequency' \
+$(cut -f1 -d' ' < /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state))
+
+if [ -z "$FREQ" ]; then
+	echo Canceled.
+	exit 1
+fi
+
+sudo cpufreq-set -c0 -u $FREQ
+sudo cpufreq-set -c1 -u $FREQ
+
+echo $KEEP
+
+if zenity --question --title 'Persist over Restart?' --text \
+'Your setting is now in effect. Would you like it to persist over reboots?
+Warning! If you set an unstable frequency to persist over restart, you might
+need to boot another OS to remove the frequency file, /etc/persist-freq.'
+then
+	echo $FREQ | sudo tee /etc/persist-freq
+fi
+

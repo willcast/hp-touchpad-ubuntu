@@ -1,0 +1,37 @@
+#!/bin/bash
+
+opt=$(zenity --list --title "TouchPad MSM Audio Configuration" \
+	--text "Use AIF1DAC1 to control master volume." --width 320 \
+	--column "Output Device" --column Explanation --height 400 \
+	internal 'built-in speakers' external 'headphone jack' both \
+	'simultaneous output to both internal and external' );
+
+echo "Audio set to $opt"
+
+case $opt in
+	external)
+		amixer set 'Force Route' unmute
+		amixer set Output mute
+		amixer set Output 0%
+		amixer set Headphone unmute
+		amixer set Headphone 100%
+		;;
+
+	internal)
+		amixer set 'Force Route' mute
+		amixer set Output unmute
+		amixer set Output 100%
+		amixer set Headphone mute
+		amixer set Headphone 0%
+		;;
+
+	both)
+		amixer set 'Force Route' unmute
+		amixer set Output unmute
+		amixer set Output 100%
+		amixer set Headphone unmute
+		amixer set Headphone 100%
+		;;
+esac
+
+

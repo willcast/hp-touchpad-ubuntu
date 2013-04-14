@@ -1,0 +1,5 @@
+#!/bin/sh
+#Execute proper touchscreen service depending on kernel version.
+
+KERNVER=$(uname -r | head -c 1)
+exec /usr/sbin/tssrv${KERNVER}p

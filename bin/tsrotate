@@ -1,0 +1,38 @@
+#!/bin/sh
+
+if [ -z "$DISPLAY" ]; then
+	echo "Please run this script within X11."
+	exit
+fi
+
+if [ -z "$1" ]; then
+	rot=$(zenity --title 'Rotate Screen' \
+	--list --text 'Select touchscreen rotation:' \
+	--column 'Degrees' --column 'Orientation' \
+	auto 'Based on accelerometer' 0 Landscape 90 Portrait)
+else
+	rot=$1
+fi
+
+if [ -z "$rot" ]; then
+	echo 'Canceled.'
+	exit 0
+fi
+
+case $rot in
+0 )
+	killall rotationd
+	xrandr -o normal
+	sudo stop tssrvp
+	;;
+90 )
+	killall rotationd
+	xrandr -o left
+	sudo stop tssrvl
+	;;
+auto )
+	nohup rotationd
+	;;
+esac
+
+exit 0

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+curIlimit=$(cat /sys/power/charger/currentlimit)
+
+if [ -z "$1" ]; then
+	Ilimit=$(zenity --list --text='Choose the current limit for your charger.' \
+		--column='' current700ma current1000ma current1400ma current2000ma)
+else
+	Ilimit=$1
+fi
+
+if [ ! -z "$Ilimit" ]; then
+	echo $Ilimit | sudo tee /sys/power/charger/currentlimit
+else
+	echo 'Canceled.'
+fi
+
+exit 0
+

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+cb=$(cat /sys/class/leds/lcd-backlight/brightness)
+
+if [ -z "$1" ]; then
+	b=$(zenity --title 'setbrightness' --scale --text "LCD Brightness" \
+	--min-value=4 --max-value=255 --value=$cb)
+else
+	b=$1
+fi
+
+if [ -z "$b" ]; then
+	echo 'Canceled.'
+	exit 0
+fi
+
+if [ $b -lt 4 ]; then
+	echo "Brightness must be above 3."
+	exit 1
+fi
+if [ $b -gt 255 ]; then
+	echo "Brightness must be below 256."
+	exit 1
+fi
+
+echo $b | sudo tee /sys/class/leds/lcd-backlight/brightness
+
